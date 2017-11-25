@@ -427,9 +427,8 @@
     app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command , function(options){
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
 
-
             options.SQL.scrapDb = scrapdb
-
+            callback(options)
 
         })
     })

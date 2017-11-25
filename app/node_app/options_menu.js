@@ -29,7 +29,7 @@
         app.command = command
         require("./sql_common.js")(app, function (commonSQL) {
             app.commonSQL = commonSQL
-            app.commonSQL.init({ SQL: { db: null }, Command: command }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
+            app.commonSQL.init({ SQL: { db: null }, Command: command }, command, app._fileCredenciales + command , function (scrapdb) {
                 scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosRead WHERE Type='" + type + "' AND " + command.toLowerCase() + '= '+(command=='SCRAP' ? 1: 0) , function (err, record) {
                     if (command == 'SCRAP') {
                         var anyos = []
@@ -62,7 +62,7 @@
                         myArgs[0]= command.value
                         app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
                                 .then(function (type) {
-                                    getanyos(app, 'SCRAP', type.value, function (app, anyos) {
+                                    getanyos(app, command.value , type.value, function (app, anyos) {
                                         app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
                                                 .then(function (resp) {
 

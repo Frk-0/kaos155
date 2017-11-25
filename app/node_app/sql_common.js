@@ -63,7 +63,7 @@
                                          
                             ]).then(function (resp) {
                                 //_this.createfistConnect(resp, function (fail) {
-                                var db = "bbdd_kaos155_text"
+                                var db = "bbdd_kaos155"+( options.command==""?"_text":"")
 
                                 var con = app.mysql.createConnection({
                                     host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
@@ -72,7 +72,7 @@
                                     multipleStatements: true
                                 })
 
-                                var encryptor = require('simple-encryptor')(db);
+                                var encryptor = require('simple-encryptor')("bbdd_kaos155_text");
                                 var _credenciales = {
                                     host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
                                     user: resp.user, // _sql.mySQL.user,
@@ -92,22 +92,29 @@
                                         
                                         con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
                                             if (record.length == 0) {
-                                                con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
-                                                    if (err) throw err;
-                                                    console.log("Database " + db + " created");
-
-                                                    const cp = require('child_process');
-                                                    cp.exec('mysql -u' + resp.user + ' -p ' + resp.password + ' < ' + app.path.normalize('sqlfiles/CREATE_DB_' + options.Command + '.sql') , (error, stdout, stderr) => {
-                                                        if (error) throw error;
-                                                        console.log(`stdout: ${stdout}`);
-                                                        console.log(`stderr: ${stderr}`);
-                                                        console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
-                                                        con.end()
-                                                        app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify({ mySQL: _credenciales} ), function (err, _JSON) {
-                                                            callback(_credenciales)
-                                                        })
+                                                app.fs.readFile(app.path.normalize('sqlfiles/CREATE_DB_' + options.Command + '.sql'), function (err, sqlTXT) {
+                                                    con.query(sqlTXT.toString(), function (err, record) {
+                                                        if (err) {
+                                                            console.log(err)
+                                                            process.exit(1)
+                                                            callback(null)
+                                                        } else {
+                                                            const cp = require('child_process');
+                                                            cp.exec('mysql -u ' + resp.user + ' -p ' + resp.password + ' < ' + app.resolvePath('sqlfiles/StoreProcs/' + options.Command + '.sql'), (error, stdout, stderr) => {
+                                                                if (error) throw error;
+                                                                console.log(`stdout: ${stdout}`);
+                                                                console.log(`stderr: ${stderr}`);
+                                                                console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
+                                                                con.end()
+                                                                app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify({ mySQL: _credenciales }), function (err, _JSON) {
+                                                                    callback(_credenciales)
+                                                                })
+                                                            });
+                                                        }
                                                     });
-                                                })
+                                                });
+
+                                                
                                             } else {
                                                 console.log('\x1b[32m la DB ' + db + ' ya existe, continuamos ..... \x1b[0m')
                                                 con.end()

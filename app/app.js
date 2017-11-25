@@ -23,6 +23,7 @@ var App = {
     moment: require("moment"),
     merge: require('merge'),
     inquirer: require('inquirer'),
+    resolvePath : require('resolve-path')
 }
 
 String.prototype.Trim = function Trim(x) {
