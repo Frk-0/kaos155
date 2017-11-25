@@ -832,6 +832,55 @@
                     return null
                 }
             },
+            analizeSimpleLine: function (_this, line,map) {
+                var patterns = _this._transforms.getPatern(_this._transforms)
+                var _items = this.getPosExploreItems(line, map.keys.arr, false)            //extraemos las posiciones donde existen palabras clave
+
+                //var _result = this.extraeArrDeCadena(lines[i], _items, map)             //extreamos las cadenas entre palabras clave y las traspasamos a una array
+                if (_items != null) {
+                    if (line.substr(0, _items[0].p).indexOf("(") > -1) {
+                        var _Empresa = line.substr(0, _items[0].p).split("(")[0]        //extreamos la empresa del comienzo de la cadena
+                    } else {
+                        var _Empresa = line.substr(0, _items[0].p)
+                    }
+                    _Empresa = _Empresa.split("-") //.replace(/^\s+|\s+$/gm, '')  //desechando lo que no interesa
+                    //if (_Empresa.length > 2) {
+                    var _n = 2
+                    while (_n < _Empresa.length) {
+                        _Empresa[1] = _Empresa[1] + "-" + _Empresa[_n]
+                        _n++
+                    }
+                    //buscar un ID
+                    //if (_Empresa[0] * 1 == 1359)
+                    //    debugger
+                    //}
+                    _Empresa[1] = _this.transforms(Trim(_Empresa[1]), patterns.Contratista)
+                    if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1)
+                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
+
+                    if (_Empresa[1].indexOf('SA.') > -1)
+                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SA.') + 2)
+
+                    if (_Empresa[1].indexOf('SL.') > -1)
+                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SL.') + 2)
+                    
+                    var _e=_Empresa[1].split(".")[0].replace(/%/g, '.')
+                    var _line = {
+                        id: Trim(_Empresa[0]),
+                        e: _e,
+                        k: app.shorter.compress(_e),
+                        keys: _items,
+                        original: line,
+                        contenido: _this.explora(line, _items, _this.maps)
+                    }              //acumulando los resultados en una matriz
+
+                    return _line
+
+                }
+
+
+
+            },
             explora: function (cadena, keys, array) {
                 var _ret = []
                 var _i = 0

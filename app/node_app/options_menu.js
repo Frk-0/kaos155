@@ -29,8 +29,8 @@
         app.command = command
         require("./sql_common.js")(app, function (commonSQL) {
             app.commonSQL = commonSQL
-            app.commonSQL.init({ SQL: { db: null }, Command: command }, command, app._fileCredenciales + command , function (scrapdb) {
-                scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosRead WHERE Type='" + type + "' AND " + command.toLowerCase() + '= '+(command=='SCRAP' ? 1: 0) , function (err, record) {
+            app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', app._fileCredenciales + 'SCRAP' , function (scrapdb) {
+                scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND " + command.toLowerCase() + '= '+(command=='SCRAP' ? 1: 0) , function (err, record) {
                     if (command == 'SCRAP') {
                         var anyos = []
                         var date = new Date()
@@ -45,7 +45,7 @@
                               anyos[anyos.length] = n+""
                         }
                     } else {
-                        var anyos=record
+                        var anyos = ["2009"] //record
                     }
 
                     callback(app, anyos)

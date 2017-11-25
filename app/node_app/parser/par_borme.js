@@ -134,6 +134,107 @@
                                                                                         
                 })
             },
+            saveMovimientos: function (_linea, _cb) {
+                //var _ok =false
+                var _this = this
+
+                _ok = function (options, _l, _linea) {
+                    // if (_ok) {
+                    options.SQL.db.query("CALL Insert_Data_BORME_Empresa(?," + _l + ")", _line._empresa, function (err, _rec) {
+                        //console.log(_rec2)
+                        if (err != null || _rec[0][0] == null) {
+                            var cadsql = "INSERT INTO errores ?"
+                            options.SQL.db.query(_cadsql, { BOLETIN: _lines.BORME, SqlError: err.sql }, function (err, reg) {
+                                if (_l == _lines.data.length - 1) {
+                                    app._xData.TBORME++
+                                    options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
+                                } else {
+
+                                    _l++
+                                    options.parser.saveLinesDeMovimientos(_l, _lines, data, _cb)
+                                }
+                            })
+                        } else {
+                            process.stdout.write('E')
+                            options.DirEmpresas[_rec[0][0].i] = _rec[0][0]
+
+                            var _empresa = {
+                                // id: _rec[0][0].Id,
+                                Name: _rec[0][0].Name,
+                                ActiveRelations: 0,
+                                TotalRelations: 0,
+                                Nodes: [],
+                                //CompanyId: _rec[0][0].Id,
+                                Type: 1,
+                                CapitalSocial: 0,
+                                Provincia: data._list[data.e].titulo,
+                                Year: data.next.substr(6, 4),
+                                LastUpdate: data.SUMARIO_LAST.substr(8, 8)
+                            }
+
+
+                            if (_lines.data[_l].keys.length > 0) {
+                                for (_n in _lines.data[_l].contenido) {
+                                    var _t = _lines.data[_l].contenido[_n].type.toLowerCase()
+                                    //console.log(_t)
+                                    if (options.Rutines.actions[_t] != null)
+                                        _empresa = options.Rutines.actions[_t](_empresa, _lines.data[_l].contenido[_n].values)
+                                }
+                                //debugger
+                            }
+                            if (app._io)
+                                app._io.elasticIO.send('NEW', 'BORME', 'Empresa', _rec[0][0].Id, _empresa)
+
+                            options.parser.saveStrings(data.id, _lines, _rec[0][0].Id, _rec[0][0].i, function (_l) {
+                                if (_l == _lines.data.length - 1) {
+                                    app._xData.TBORME++
+                                    options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
+                                } else {
+                                    process.stdout.write('+')
+                                    _l++
+                                    options.parser.saveLinesDeMovimientos(_l, _lines, data, _cb)
+                                }
+                            })
+                        }
+
+                    })
+
+                }
+
+
+
+                //_linea = _lines.data[_l]
+
+                //_linea._empresa = ''.Trim(_linea.e.replace(/'/g, "\'").replace(/'/g, "\'"))
+                //_lines._original = _linea.original.replace(/"/g, "").replace(/'/g, "\'").replace(/\n/g, "")
+                
+
+                            cadSQl = "SELECT Id,Name," + _linea.id+" as i FROM borme_empresa WHERE Name='" + _linea.e + "'"
+
+                            options.SQL.db.query(cadSQl, function (err, _rec) {
+                                if (err != null) {
+                                    debugger
+                                } else {
+                                    if (_rec.length > 0) {
+                                        options.DirEmpresas[_rec[0].i] = _rec[0]
+                                    }
+
+                                    if (_l == _lines.data.length - 1) {
+                                        app._xData.TBORME++
+                                        options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
+                                    } else {
+                                        _l++
+                                        options.parser.saveLinesDeMovimientos(_l, _lines, data, _cb)
+                                    }
+                                       
+                                }
+                            })
+   
+      
+
+ 
+
+            },
             saveLinesDeMovimientos: function (_l,_lines, data, _cb) {
                 //var _ok =false
                 var _this = this
@@ -337,88 +438,36 @@
                     _ret(_data)
                 }
             },
-            Preceptos: function (options, urlDoc, body, data, callback) {
+            Preceptos: function (options, type, callback) {
                 var _this = this
                 var _lines = []
-                var xcadsql = null
 
-                var _file = app.PDFStore + urlDoc.split("/")[urlDoc.split("/").length - 1]
-                //var bocm = turl[turl.length - 1].split(".")[0]
-
-                //punto de guardado del PDF precepto
-                if (body != null) {
-                    app.mkdirp(app.PDFStore, function (err) {
-                        app.fs.writeFile(_file, body, function (err) {
-                            var pdf = new app.pdftotext(_file)
-                            pdf.add_options(options.pdfOpc);
-
-                            pdf.getText(function (err, text, cmd) {
-                                //
-                                if (err) {
-                                    debugger
-                                    console.error(err);
-                                } else {
-                                    //debugger
-
-                                    var _fileText =  _file.split(".pdf")[0] + ".txt"
-                                    //console.log(_fileText)
-                                    app.fs.readFile( _fileText , 'utf8', function (err, text) {
-                                        app.fs.unlink(_fileText, function (err) { 
-                                            app.fs.unlink(_file,function(err){
-
-                                                options.DirEmpresas = []
-                                                lines = text.replace(/"/g, "").split('\n')
-
-                                                _lines = options.Rutines.getDataFromMap(options.Rutines, lines, options.Rutines.maps)
-                                                //debugger
-                                                if (_lines != null) {
-                                                    if (_lines.data.length == 0){
-                                                        callback(data, null)
-                                                    } else {
-                                                        var params = [
-                                                             data.desde.substr(6, 2),                                      //Dia
-                                                             data.desde.substr(4, 2),                                      //Mes
-                                                             data.desde.substr(0, 4),                                       //Anyo
-                                                            'BORME',
-                                                            data.id,
-                                                            _lines.BORME,
-                                                            _lines.PROVINCIA,
-                                                            urlDoc
-                                                        ]
-
-                                                        options.SQL.db.query('CALL Insert_Data_BORME( ?,?,?,?,?,?,?,? ) ', params , function (err, DataRecord) {
-
-                                                            var _avanza = true
-                                                            if (err)
-                                                                if (err.code = 'ER_DUP_ENTRY') {
-                                                                    _avanza = true
-                                                                } else {
-                                                                    debugger
-                                                                }
-
-                                                            var _counter = 0
-                                                            if (_avanza) {
-                                                                options.parser.saveLinesDeMovimientos(0, _lines,data, callback)
-                                                            } else {
-                                                                callback(data, null)
-                                                            }
-                                                        })
-                                                    }
-                                                
-                                                } else {
-                                                    debugger
-                                                    callback(data, null)
-                                                }
-                                            })
-                                        })
-                                    })
-                                }
-                            })
+                options.SQL.scrapDb.SQL.db.query('call GetNextTextParser(?,?)', [ type, app.anyo ], function (err, recordset) {
+                    if(recordset[0].length>0){
+                        //saveMovimientos
+                        _line = options.Rutines.analizeSimpleLine(options.Rutines, recordset[0][0].texto, options.Rutines.maps)
+                        _line.data = recordset[0][0]
+                        
+                        _this.saveMovimientos(_line, function () {
+                            _ok(options, _l, _lines)
+                        
                         })
-                    })
-                } else {
-                    callback(data,true)
-                }
+                        
+
+
+                        //options.SQL.db.query('CALL Insert_Data_BORME( ?,?,?,?,?,?,?,? ) ', params , function (err, DataRecord) {
+
+
+
+                    //var bocm = turl[turl.length - 1].split(".")[0]
+
+                    //punto de guardado del PDF precepto
+
+                       //
+                    } else {
+                        callback(data,true)
+                    }
+                })
             }
         }
     }
