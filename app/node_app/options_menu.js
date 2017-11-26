@@ -31,8 +31,9 @@
             app.commonSQL = commonSQL
             app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', app._fileCredenciales + 'SCRAP' , function (scrapdb) {
                 scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND " + command.toLowerCase() + '= '+(command=='SCRAP' ? 1: 0) , function (err, record) {
+                    var anyos = []
                     if (command == 'SCRAP') {
-                        var anyos = []
+                        
                         var date = new Date()
                         for (n = app.Mins[type]; n <= date.getFullYear() ; n++) {
                             var ok=true
@@ -42,10 +43,12 @@
                                 }
                             }
                             if(ok)
-                              anyos[anyos.length] = n+""
+                              anyos[anyos.length] = n + ""
                         }
                     } else {
-                        var anyos = ["2009"] //record
+                        for (p in record) {
+                            anyos[anyos.length] = record[p].Anyo + ""
+                        }
                     }
 
                     callback(app, anyos)

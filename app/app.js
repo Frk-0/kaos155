@@ -96,7 +96,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
             urlBORME: 'http://81.89.32.200/',
             urlBOCM: 'http://w3.bocm.es/boletin/CM',
             PDFStore: "../DataFiles/_almacen/PDF/",
-            
+            IA : require('./node_app/IA.js')(app),
             _xData: {
                 VisualCif: {
                     Ranking: {
@@ -166,7 +166,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                                         'CANAL EXTENSIA SA'
                                                                                 ]
                                         for (i in sospes) {
-                                            app.IA._ks[app.IA._ks.length] = app.shorter.unique(sospes[i])
+                                            app.IA.setinMemory('_ks', sospes, app.shorter.unique)
                                         }
 
 

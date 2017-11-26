@@ -451,8 +451,10 @@
                         console.log(_line.k, "=", _line.e)
 
 
-                        if(app.IA.BM.indexOf(o => o._m === _line.k)==-1)
-                            app.IA.BM[app.IA.BM.length] = { i: 1245489, _m: _line.k }
+                        if (app.IA.find('BM', _line.k)==null)
+                            if (app.IA.setinMemory('BM', _line.k, 1245489, app.IA.find, "_ks") != null)
+                                debugger
+                            //app.IA.BM[app.IA.BM.length] = { i: 1245489, _m: _line.k }
 
                         options.SQL.scrapDb.SQL.db.query("UPDATE _"+type.toLowerCase()+"_text_"+app.anyo+" set parser=1 where ID_BORME = ? ",[recordset[0][0].ID_BORME],function(err,record){
                             Preceptos(options, type, callback, Preceptos)
@@ -474,7 +476,7 @@
 
                        //
                     } else {
-                        callback(data,true)
+                        callback(null,true)
                     }
                 })
             }
