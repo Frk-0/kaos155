@@ -210,7 +210,7 @@
             } else {
                 options.parser.Preceptos(options, type, function () {
                     debugger
-                })
+                }, options.parser.Preceptos)
             }
         }
     }

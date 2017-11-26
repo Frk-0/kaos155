@@ -1,6 +1,7 @@
 ﻿module.exports = function (app,  callback) {
     
     options = {
+        
         Command: app.command,
         Rutines: require('./BORME/Borme_Rutines')(app, require('./BORME/Borme_Transforms')(app)),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
@@ -438,7 +439,7 @@
                     _ret(_data)
                 }
             },
-            Preceptos: function (options, type, callback) {
+            Preceptos: function (options, type, callback, Preceptos) {
                 var _this = this
                 var _lines = []
 
@@ -447,11 +448,19 @@
                         //saveMovimientos
                         _line = options.Rutines.analizeSimpleLine(options.Rutines, recordset[0][0].texto, options.Rutines.maps)
                         _line.data = recordset[0][0]
-                        
-                        _this.saveMovimientos(_line, function () {
-                            _ok(options, _l, _lines)
-                        
+                        console.log(_line.k, "=", _line.e)
+
+
+                        if(app.IA.BM.indexOf(o => o._m === _line.k)==-1)
+                            app.IA.BM[app.IA.BM.length] = { i: 1245489, _m: _line.k }
+
+                        options.SQL.scrapDb.SQL.db.query("UPDATE _"+type.toLowerCase()+"_text_"+app.anyo+" set parser=1 where ID_BORME = ? ",[recordset[0][0].ID_BORME],function(err,record){
+                            Preceptos(options, type, callback, Preceptos)
                         })
+                        //_this.saveMovimientos(_line, function () {
+                        //    _ok(options, _l, _lines)
+                        
+                        //})
                         
 
 

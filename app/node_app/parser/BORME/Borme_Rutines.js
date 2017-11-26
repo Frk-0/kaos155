@@ -855,20 +855,26 @@
                     //    debugger
                     //}
                     _Empresa[1] = _this.transforms(Trim(_Empresa[1]), patterns.Contratista)
-                    if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1)
+                    if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1) {
                         _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
-
-                    if (_Empresa[1].indexOf('SA.') > -1)
+                    }
+                    if (_Empresa[1].indexOf('SA.') > -1) {
                         _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SA.') + 2)
+                        var _k = app.shorter.unique(_Empresa[1].substr(0, _Empresa[1].indexOf('SA.')-1))
+                    }
 
-                    if (_Empresa[1].indexOf('SL.') > -1)
+                    if (_Empresa[1].indexOf('SL.') > -1) {
                         _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SL.') + 2)
-                    
+                        var _k = app.shorter.unique(_Empresa[1].substr(0, _Empresa[1].indexOf('SL.') - 1))
+                    }
+                    //if (_k == null)
+                    //    debugger
+
                     var _e=_Empresa[1].split(".")[0].replace(/%/g, '.')
                     var _line = {
                         id: Trim(_Empresa[0]),
                         e: _e,
-                        k: app.shorter.compress(_e),
+                        k: app.shorter.unique(_e),
                         keys: _items,
                         original: line,
                         contenido: _this.explora(line, _items, _this.maps)

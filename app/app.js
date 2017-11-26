@@ -24,7 +24,7 @@ var App = {
     merge: require('merge'),
     inquirer: require('inquirer'),
     resolvePath: require('resolve-path'),
-    shorter: require('shorter'),
+    shorter: require('shorthash'),
 }
 
 String.prototype.Trim = function Trim(x) {
@@ -96,7 +96,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
             urlBORME: 'http://81.89.32.200/',
             urlBOCM: 'http://w3.bocm.es/boletin/CM',
             PDFStore: "../DataFiles/_almacen/PDF/",
-
+            
             _xData: {
                 VisualCif: {
                     Ranking: {
@@ -152,6 +152,22 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                     //cargamos los contadores para poder continuar donde se dejó
                                     app.commonSQL.SQL.getCounter(app, options, type, function (options) {
                                         //realizamos el proceso de escrapeo  
+
+                                        var sospes = ['ARPEGIO AREAS DE PROMOCION EMPRESARIAL SA',
+                                                        'NUEVO ARPEGIO SA',
+                                                        'CANAL DE ISABEL II SA',
+                                                        'Canal De Isabel Ii',
+                                                        'Canal De Isabel Ii Gestion Sa',
+                                                        'Canal De Isabel Ii Gestion Sociedad Limitada',
+                                                        'ALCALA NATURA 21 SA',
+                                                        'Instituto Madrileño De Desarrollo',
+                                                        'imade',
+                                                        'GLOBAL NETWORK & BUSINESS INNOVATION SL',
+                                                        'CANAL EXTENSIA SA'
+                                                                                ]
+                                        for (i in sospes) {
+                                            app.IA._ks[app.IA._ks.length] = app.shorter.unique(sospes[i])
+                                        }
 
 
                                         options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
