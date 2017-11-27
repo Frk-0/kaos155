@@ -71,11 +71,24 @@
                         //
                         //Cargamos y analizamos las secciones con el parseador concreto de cada TYPE de documento
                         //BOE,BOCM,BORME......etc
-                            
-                        options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
-                            callback(data, repeat)
+                        // si el campo STOP estuviera a 1
+                        //salimos del proceso
+
+                        cadsql = "SELECT STOP FROM LastRead WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
+                        options.SQL.db.query(cadsql, function (err, record) {
+                            debugger
+                            if (record[0].STOP == 0) {
+                                options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
+                                    callback(data, repeat)
+                                })
+                            } else {
+                                cadsql = "UPDATE LastRead set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
+                                options.SQL.db.query(cadsql, function (err, record) {
+                                    console.log('proceso obligado a parar')
+                                    process.exit(1)
+                                })
+                            }
                         })
-                        //})
 
                         
                     },
