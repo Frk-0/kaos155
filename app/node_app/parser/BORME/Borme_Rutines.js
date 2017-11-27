@@ -385,22 +385,22 @@
             //
             // 
             SQL: {
-                Constitucion: function (__data,data, callback) {
+                Constitucion: function (__data, callback) {
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                AmpliaCapital: function (__data, data, callback) {
+                AmpliaCapital: function (__data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                Disolucion: function (__data, data, callback) {
+                Disolucion: function (__data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                Extincion: function (__data, data, callback) {
+                Extincion: function (__data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                SaveDirectivo: function (__data, data, Active, callback) {
+                SaveDirectivo: function (__data, Active, callback) {
                     var capitalizeFirstLetter= function(string) {
                         return string.charAt(0).toUpperCase() + string.slice(1);
                     }
@@ -411,7 +411,7 @@
                         _t = "Empresa"
 
                     cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
-                    options.SQL.db.query(cadsql,[__data.values.value, data.e ], function (err, _directivo) {
+                    options.SQL.db.query(cadsql, [__data.values.value, app.shorter.unique(__data.values.value)], function (err, _directivo) {
                         if (err)
                             debugger
                         if (_directivo.length == 0) {

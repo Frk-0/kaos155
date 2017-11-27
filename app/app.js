@@ -248,8 +248,6 @@ String.prototype.lastIndexOfRegex = function (regex) {
  
         })
         
-
-
         App.parameters(App, myArgs, function (app) {
             if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
                 myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
@@ -261,7 +259,6 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
                 }
             }
-
 
             //debugger
             if (app.Mins[myArgs[1]] <= app.anyo) {
