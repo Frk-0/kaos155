@@ -71,7 +71,7 @@ String.prototype.indexOfRegex = function (regex) {
     var match = this.match(regex);
     return match ? this.indexOf(match[0]) : -1;
 };
-String.prototype.lastIndexOfRegex = function (regex) {
+String.prototype.lastIndexOfRegex                   = function (regex) {
     var match = this.match(regex);
     return match ? this.lastIndexOf(match[match.length - 1]) : -1;
 };

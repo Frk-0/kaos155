@@ -11,7 +11,7 @@
         
         SQL: { db: null },
         scrap: {
-            Secciones: function (options, url, data, callback) {
+            Secciones : function (options, url, data, callback) {
                 app.Rutines(app).askToServer(options, url, data, function (options, body, data) {
                     //debugger
                     //try {
