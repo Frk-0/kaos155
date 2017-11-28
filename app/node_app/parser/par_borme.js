@@ -38,19 +38,19 @@
                 //var _ok =false
                 var _this = this
 
-                _ok = function (options, _linea) {
-                    app.commonSQL.SQL.commands.insert.Borme.empresa(options, _linea, function(_linea,_empresa) {
-
-                        if (app._io)
-                            app._io.elasticIO.send('NEW', 'BORME', 'Empresa', _rec[0][0].Id, _empresa)
-
+                _add = function (options, _linea) {
+                    app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
+                        _linea.ID = _rec[0][0].Id
                         options.parser.saveDiarioMovimientos(_linea, _cb)
 
                     }, _cb )
-
+                        
                 }
-
-                _ok(options, _linea)
+                if (_linea.addNew) {
+                    _add(options, _linea)
+                } else {
+                    options.parser.saveDiarioMovimientos(_linea, _cb)
+                }
             },
             saveDiarioMovimientos: function ( _linea, _ret ) {
                 var saveLineContenido = function (  _e, _linea, _cb, _func) {
@@ -68,7 +68,7 @@
                                 debugger
                             //if (_line.data[e] == null)
                             //    debugger
-                            var _idEmpresa = false
+                            var _idEmpresa = true
                             if(idDirectivo>0)
                                  _idEmpresa = options.foundEmpresas(options.DirEmpresas, _linea.k)
                             //if (_idEmpresa == null)
@@ -84,8 +84,9 @@
                                  _linea.data.BOLETIN.match(/[\d]{4}/)[0],
                                  _linea.data.provincia,
                                  _linea.data.ID_Empresa,
+                                 _linea.k,
                                  idDirectivo,
-                                 _idEmpresa.empresa ? 0 : 1,
+                                 _idEmpresa ? 0 : 1,
                                  (Active ? 1 : 0),
                                  _Dl.type ? _Dl.type : _Dl.values.type,
                                  _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
@@ -131,13 +132,16 @@
                         //console.log(_line.k, "=", _line.e)
 
 
-                        if (app.IA.find('BM', _line.k)==null)
-                            if (app.IA.setinMemory('BM', _line.k, 1245489, app.IA.find, "_ks") != null)
-                                debugger
-                            
-                        _this.saveLineaDeMovimientos(_line ,function(){
-                            options.SQL.scrapDb.SQL.db.query("UPDATE _"+type.toLowerCase()+"_text_"+app.anyo+" set parser=1 where ID_BORME = ? ",[recordset[0][0].ID_BORME],function(err,record){
-                                Preceptos(options, type, callback, Preceptos)
+                        //if (app.IA.find('BM', _line.k)==null)
+                        //    if (app.IA.setinMemory('BM', _line.k, 1245489, app.IA.find, "_ks") != null)
+                        //        debugger
+                        app.IA.send('setinMemory', { type: '_E', array: [_line.e], compress: 'shorthash.unique' }, function (data) {
+                            _line.data.ID_Empresa = data.data.array._id[0]
+                            _line.addNew = data.data.array.add[0]
+                            _this.saveLineaDeMovimientos(_line ,function(){
+                                options.SQL.scrapDb.SQL.db.query("UPDATE _"+type.toLowerCase()+"_text_"+app.anyo+" set parser=1 where ID_BORME = ? ",[recordset[0][0].ID_BORME],function(err,record){
+                                    Preceptos(options, type, callback, Preceptos)
+                                })
                             })
                         })
 

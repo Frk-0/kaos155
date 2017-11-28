@@ -407,17 +407,19 @@
                     var _e = 0
                     var _t = 'Directivo'
 
-                    if (__data.values.Empresa)
+                    if (__data.values.value == __data.values.value.toUpperCase() )
                         _t = "Empresa"
 
-                    cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
-                    options.SQL.db.query(cadsql, [__data.values.value, app.shorter.unique(__data.values.value)], function (err, _directivo) {
-                        if (err)
-                            debugger
-                        if (_directivo.length == 0) {
-                            debugger
-                            //cadsql = "INSERT INTO borme_" + _t.toLowerCase() + " SET ? ON DUPLICATE KEY UPDATE _l=id"
-                            ///options.SQL.db.query(cadsql, { Name: __data.values.value }, function (err, _directivo) {
+                    app.IA.send('setinMemory', { type: '_E', array: [_line.e], compress: 'shorthash.unique' }, function (data) {
+                        app.commonSQL.SQL.commands.insert.Borme.keys(options, _t , _linea, function(_linea,_empresa) {
+                        //cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
+                        //options.SQL.db.query(cadsql, [__data.values.value, app.shorter.unique(__data.values.value)], function (err, _directivo) {
+                            if (err)
+                                debugger
+                            if (_directivo.length == 0) {
+                                debugger
+                                //cadsql = "INSERT INTO borme_" + _t.toLowerCase() + " SET ? ON DUPLICATE KEY UPDATE _l=id"
+                                ///options.SQL.db.query(cadsql, { Name: __data.values.value }, function (err, _directivo) {
                                 //if (!err) {
                                 //    cadsql = "INSERT INTO errores ?"
                                 //    options.SQL.db.query(cadsql, { Table: 'directivos', text: err }, function () {
@@ -425,11 +427,11 @@
                                 //    })
                                 //} else {
 
-                                    //if (_directivo.insertId == null) {
-                                    //    debugger
-                                    //} else {
+                                //if (_directivo.insertId == null) {
+                                //    debugger
+                                //} else {
 
-                                    //}
+                                //}
 
 
 
@@ -437,16 +439,19 @@
                                 //} else {
                                 //    debugger
                                 //}
-                            //})
-                        } else {
-                            if (_directivo.length > 1) {
-                                //debugger
-                                x=1
+                                //})
+                            } else {
+                                if (_directivo.length > 1) {
+                                    //debugger
+                                    x=1
+                                }
+                                //__data.idEmpresa = _directivo[0].id
+                                process.stdout.write(__data.values.Empresa?"e":'d')
+                                callback(__data, _directivo[0][0].Id, __data.values.Empresa)
                             }
-                            //__data.idEmpresa = _directivo[0].id
-                            process.stdout.write(__data.values.Empresa?"e":'d')
-                            callback(__data, _directivo[0][0].Id, __data.values.Empresa)
-                        }
+                        }, function (err, record) {
+                            debugger
+                        })
                     })
                
                 },

@@ -232,45 +232,18 @@
                                 }
                             })
                         },
-                        empresa: function (options, _linea, callback, _cberror) {
-                            options.SQL.db.query("CALL Insert_Data_BORME_Empresa(?,?)", [_linea.e, _linea.k], function (err, _rec) {
+                        keys: function (options, table , params, callback, _cberror) {
+                            options.SQL.db.query("CALL Insert_Data_BORME_" + table + "(?,?,?)", [params.ID, params.e, params.k], function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
-                                    var cadsql = "INSERT INTO errores ?"
-                                    options.SQL.db.query(_cadsql, { BOLETIN: _linea.data.BOLETIN, SqlError: err.sql }, function (err, reg) {
-                                        _cb()
-                                    })
+                                    _cberror(error)
                                 } else {
-                                    var date = new Date()
-                                    var _empresa = {
-                                        // id: _rec[0][0].Id,
-                                        Name: _rec[0][0].Name,
-                                        ActiveRelations: 0,
-                                        TotalRelations: 0,
-                                        Nodes: [],
-                                        //CompanyId: _rec[0][0].Id,
-                                        Type: 1,
-                                        CapitalSocial: 0,
-                                        Provincia: _linea.data.provincia,
-                                        Year: app.anyo,
-                                        LastUpdate: date.toISOString()
-                                    }
-                                    _linea.data.ID_Empresa = _rec[0][0].Id
-
-                                    if (_linea.keys.length > 0) {
-                                        for (_n in _linea.contenido) {
-                                            var _t = _linea.contenido[_n].type.toLowerCase()
-                                            //console.log(_t)
-                                            if (options.Rutines.actions[_t] != null)
-                                                _empresa = options.Rutines.actions[_t](_empresa, _linea.contenido[_n].values)
-                                        }
-                                        //debugger
-                                    }
-                                    callback(_linea,_empresa)
+                                    
+                                    callback(params, record)
                                 }
                             })
                         },
                         diario: function (options, params, callback) {
-                            options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
+                            options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err)
                                     debugger
                                 callback(err, _rec)

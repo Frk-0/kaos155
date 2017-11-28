@@ -1,7 +1,8 @@
-var Version = '0.1.3'
+var Version = '0.1.4'
 
 
-console.log('kaos155 App - version -' + Version+'.' )
+
+console.log('kaos155 App - version -' + Version + '.')
 
 var App = {
     version: Version,
@@ -17,7 +18,7 @@ var App = {
     request: require('request'),
     mkdirp: require('mkdirp'),
     cheerio: require('cheerio'),
-    path:require('path'),
+    path: require('path'),
     fs: require("fs"),
     http: require('http'),
     moment: require("moment"),
@@ -75,28 +76,31 @@ String.prototype.lastIndexOfRegex = function (regex) {
     return match ? this.lastIndexOf(match[match.length - 1]) : -1;
 };
 
-//
- require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date) {
+
+App.IA = require('./node_app/IA-consumer.js')(App)
+App.IA.init('http://localhost:8080', App.IA, function (socket) {
+    //App.IA = IA
+    require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date) {
 
         debugger
 
-        var App = app.merge(app,{           
-            command : myArgs[0],            
-               
-            update: myArgs[3] ,
+        var App = app.merge(app, {
+            command: myArgs[0],
+
+            update: myArgs[3],
             anyo: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
             Command: myArgs[0],
 
-           
+
             _lb: { BOCM: 5, BOE: 6, BORME: 8 },
             timeDelay: 1500,
-            drop:false,
-            SqlIP:null, //'192.168.0.3',
+            drop: false,
+            SqlIP: null, //'192.168.0.3',
             urlBOE: 'http://81.89.32.200/',
             urlBORME: 'http://81.89.32.200/',
             urlBOCM: 'http://w3.bocm.es/boletin/CM',
             PDFStore: "../DataFiles/_almacen/PDF/",
-            IA : require('./node_app/IA.js')(app),
+            IA: require('./node_app/IA-consumer.js')(app),
             _xData: {
                 VisualCif: {
                     Ranking: {
@@ -135,49 +139,70 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 this.pdftotext = require('./node_app/pdftotext.js')
                 require('./node_app/sql_common.js')(app, function (SQL) {
                     app.commonSQL = SQL
-            
+
                     cb({
-                        EXEC: function (type) {
-                            require('./node_app/elasticIO.js')(app).init(function (options) {
-                                app.io = { elasticIO: options }
-                   
+                        PARSER: function (type) {
+
+
+
                                 //cargamos la rutina de escrapeo específica del tipo de BOLETIN
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
                                 //el retorno es el objeto encargado del escrapeo                 
-                                var prefix = app.command.substr(0,3).toLowerCase() + "_"
-                                require('./node_app/' + app.Command.toLowerCase() + '/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
+                                var prefix = app.command.substr(0, 3).toLowerCase() + "_"
+                                require('./node_app/PARSER/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
+                                    //options = objeto que realiza el escrapeo
+                                    //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
+                                    app.BOLETIN = options
+                                    //cargamos los contadores para poder continuar donde se dejó
+                                    app.commonSQL.SQL.getCounter(app, options, type, function (options) {
+                                        //realizamos el proceso de parseo  
+
+                                        var sospes = ['ARPEGIO AREAS DE PROMOCION EMPRESARIAL SA',
+                                                      'NUEVO ARPEGIO SA',
+                                                      'CANAL DE ISABEL II SA',
+                                                      'Canal De Isabel Ii',
+                                                      'Canal De Isabel Ii Gestion Sa',
+                                                      'Canal De Isabel Ii Gestion Sociedad Limitada',
+                                                      'ALCALA NATURA 21 SA',
+                                                      'Instituto Madrileño De Desarrollo',
+                                                      'imade',
+                                                      'GLOBAL NETWORK & BUSINESS INNOVATION SL',
+                                                      'CANAL EXTENSIA SA'
+                                        ]
+                                        app.IA.send('setinMemory', { type: '_ks', array: sospes, compress: 'shorthash.unique' })
+
+                                        options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
+                                        //options._common.Actualize(options, type, null)
+                                    })
+                                })
+                            //})
+                        
+                        },
+                        SCRAP: function (type) {
+
+                            //require('./node_app/elasticIO.js')(app).init(function (options) {
+                                //app.io = { elasticIO: options }
+
+                                //cargamos la rutina de escrapeo específica del tipo de BOLETIN
+                                //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
+                                //el retorno es el objeto encargado del escrapeo                 
+                                var prefix = app.command.substr(0, 3).toLowerCase() + "_"
+                                require('./node_app/SCRAP/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                                     app.BOLETIN = options
                                     //cargamos los contadores para poder continuar donde se dejó
                                     app.commonSQL.SQL.getCounter(app, options, type, function (options) {
                                         //realizamos el proceso de escrapeo  
-
-                                        var sospes = ['ARPEGIO AREAS DE PROMOCION EMPRESARIAL SA',
-                                                        'NUEVO ARPEGIO SA',
-                                                        'CANAL DE ISABEL II SA',
-                                                        'Canal De Isabel Ii',
-                                                        'Canal De Isabel Ii Gestion Sa',
-                                                        'Canal De Isabel Ii Gestion Sociedad Limitada',
-                                                        'ALCALA NATURA 21 SA',
-                                                        'Instituto Madrileño De Desarrollo',
-                                                        'imade',
-                                                        'GLOBAL NETWORK & BUSINESS INNOVATION SL',
-                                                        'CANAL EXTENSIA SA'
-                                                                                ]
-                                        for (i in sospes) {
-                                            app.IA.setinMemory('_ks', sospes, app.shorter.unique)
-                                        }
-
-
                                         options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
                                         //options._common.Actualize(options, type, null)
                                     })
                                 })
-                            })
+                            //})
+
                         },
                         CREATE: function (datafile) {
-                            app.commonSQL.init({ SQL: { db:null} }, 'CREATE', function () { 
+                            app.commonSQL.init({ SQL: { db: null } }, 'CREATE', function () {
                                 process.exit(1)
                             })
 
@@ -185,13 +210,13 @@ String.prototype.lastIndexOfRegex = function (regex) {
                     })
                     //})
                 })
-            },        
-            logStop : function (i, text) {
-                console.log( i +'.-'+text)
+            },
+            logStop: function (i, text) {
+                console.log(i + '.-' + text)
                 console.log('SISTEMA DETENIDO')
                 process.exit(i)
             },
-            parameters: function (app, myArgs,callback) {
+            parameters: function (app, myArgs, callback) {
 
 
                 var arg = myArgs[3]
@@ -205,8 +230,8 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 }
 
                 if (app.Commands.indexOf(myArgs[0]) == -1) {
-                    app.logStop(1,'comando no valido falta SCRAP PARSE BORME')
-           
+                    app.logStop(1, 'comando no valido falta SCRAP PARSE BORME')
+
                 } else {
 
                     if (app.TypeBoletines.indexOf(myArgs[1]) == -1) {
@@ -245,9 +270,9 @@ String.prototype.lastIndexOfRegex = function (regex) {
                     }
                 })
             }
- 
+
         })
-        
+
         App.parameters(App, myArgs, function (app) {
             if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
                 myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
@@ -270,12 +295,12 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 // app.fs.readFile(app.path.normalize('../DataFiles/cargos.json'), 'utf-8', function (err, dataFile) {
                 //     console.log(JSON.parse(dataFile))
 
-                app.init(app, function (_f) { _f.EXEC(app.Type) })
+                app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
                 //})
             } else {
-                console.log( 'no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]] )
+                console.log('no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]])
             }
         })
- })
-
+    })
+})
 
