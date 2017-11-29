@@ -39,7 +39,7 @@
             var _this = this
             _this.encryptor = require('simple-encryptor')("bbdd_kaos155_text") // + (options.Command == 'SCRAP' ? '_text' : ''))
 
-            if (process.env['KAOS_MYSQL_' + type + '_PASS']) {
+            if (process.env['KAOS_MYSQL_' + options.Command + '_PASS']) {
                 
                 _this.poolSql[type] = app.mysql.createPool({
                     host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'], //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
@@ -100,7 +100,7 @@
                                                             callback(null)
                                                         } else {
                                                             const cp = require('child_process');
-                                                            cp.exec('mysql -u ' + resp.user + ' -p ' + resp.password + ' < ' + app.resolvePath('sqlfiles/StoreProcs/' + options.Command + '.sql'), (error, stdout, stderr) => {
+                                                            cp.exec('mysql -u ' + resp.user + ' -p' + resp.password + ' < ' + app.resolvePath('sqlfiles/StoreProcs/' + options.Command + '.sql'), (error, stdout, stderr) => {
                                                                 if (error) throw error;
                                                                 console.log(`stdout: ${stdout}`);
                                                                 console.log(`stderr: ${stderr}`);
