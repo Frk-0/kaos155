@@ -2,8 +2,8 @@
     
     var options = {
         Command : app.command,
-        Rutines: require('./BOLETIN/__Rutines')(app),
-        transforms: require('./BOLETIN/__Transforms')(app),
+        Rutines: require('../utils/BOLETIN/__Rutines')(app),
+        transforms: require('../utils/BOLETIN/__Transforms')(app),
         _common: require('../parser_common')(app),
         SQL: {
             db: null,

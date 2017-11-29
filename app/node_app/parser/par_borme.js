@@ -3,7 +3,7 @@
     options = {
         
         Command: app.command,
-        Rutines: require('./BORME/Borme_Rutines')(app, require('./BORME/Borme_Transforms')(app)),
+        Rutines: require('../utils/BORME/Borme_Rutines')(app, require('./BORME/Borme_Transforms')(app)),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         keyMap: [
             'Constitución.',
