@@ -63,13 +63,13 @@
                         // !!! Magic Point ¡¡¡¡
                         // ejecutamos una rutina especifica dependiendo del valor de Type
                         // 
-                        options.Rutines.SQL[_linea.contenido[_e].type](_linea.contenido[_e], function (_Dl, idDirectivo, Active) {
+                        options.Rutines.SQL[_linea.contenido[_e].type](_linea, _linea.contenido[_e], function (_Dl, idRelacionado, Active) {
                             if (_Dl == null)
                                 debugger
                             //if (_line.data[e] == null)
                             //    debugger
                             var _idEmpresa = true
-                            if(idDirectivo>0)
+                            if (idRelacionado > 0)
                                  _idEmpresa = options.foundEmpresas(options.DirEmpresas, _linea.k)
                             //if (_idEmpresa == null)
                             //    debugger
@@ -85,7 +85,7 @@
                                  _linea.data.provincia,
                                  _linea.data.ID_Empresa,
                                  _linea.k,
-                                 idDirectivo,
+                                 idRelacionado,
                                  _idEmpresa ? 0 : 1,
                                  (Active ? 1 : 0),
                                  _Dl.type ? _Dl.type : _Dl.values.type,

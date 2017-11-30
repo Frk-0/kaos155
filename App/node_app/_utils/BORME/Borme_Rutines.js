@@ -385,67 +385,56 @@
             //
             // 
             SQL: {
-                Constitucion: function (__data, callback) {
+                Constitucion: function (_linea, __data, callback) {
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                AmpliaCapital: function (__data, callback) {
+                AmpliaCapital: function (_linea, __data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                Disolucion: function (__data, callback) {
+                Disolucion: function (_linea, __data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                Extincion: function (__data, callback) {
+                Extincion: function (_linea, __data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                SaveDirectivo: function (__data, Active, callback) {
+                SaveDirectivo: function (_linea, __data, Active, callback) {
                     var capitalizeFirstLetter= function(string) {
                         return string.charAt(0).toUpperCase() + string.slice(1);
                     }
                     var _e = 0
-                    var _t = 'Directivo'
-
-                    if (__data.values.value == __data.values.value.toUpperCase() )
+                    var _t = "_D"
+                    var _table = "Directivo"
+                    //__data.values.Empresa = false
+                    if (__data.values.value == __data.values.value.toUpperCase()) {
+                        _t = "_E"
                         _t = "Empresa"
+                        __data.values.Empresa = true
+                    }
 
-                    app.IA.send('setinMemory', { type: '_E', array: [_line.e], compress: 'shorthash.unique' }, function (data) {
-                        app.commonSQL.SQL.commands.insert.Borme.keys(options, _t , _linea, function(_linea,_empresa) {
+                    app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
+                        params = {
+                            table: _table,
+                            data: { ID: data.data.array._id[0] },
+                            e: __data.values.value,
+                            k: data.data.array._keys[0]
+                        }
+                        //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
+                        app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, record) {
                         //cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
                         //options.SQL.db.query(cadsql, [__data.values.value, app.shorter.unique(__data.values.value)], function (err, _directivo) {
                             if (err)
                                 debugger
                             if (_directivo.length == 0) {
                                 debugger
-                                //cadsql = "INSERT INTO borme_" + _t.toLowerCase() + " SET ? ON DUPLICATE KEY UPDATE _l=id"
-                                ///options.SQL.db.query(cadsql, { Name: __data.values.value }, function (err, _directivo) {
-                                //if (!err) {
-                                //    cadsql = "INSERT INTO errores ?"
-                                //    options.SQL.db.query(cadsql, { Table: 'directivos', text: err }, function () {
-                                //        callback(__data, null, null, false)
-                                //    })
-                                //} else {
-
-                                //if (_directivo.insertId == null) {
-                                //    debugger
-                                //} else {
-
-                                //}
-
-
-
-                                ////    callback(__data, err == null ? _directivo.insertId : null, __data.values.Empresa, Active)
-                                //} else {
-                                //    debugger
-                                //}
-                                //})
                             } else {
                                 if (_directivo.length > 1) {
                                     //debugger
                                     x=1
                                 }
-                                //__data.idEmpresa = _directivo[0].id
+
                                 process.stdout.write(__data.values.Empresa?"e":'d')
                                 callback(__data, _directivo[0][0].Id, __data.values.Empresa)
                             }
@@ -455,22 +444,22 @@
                     })
                
                 },
-                Nombramiento: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, true, callback)
+                Nombramiento: function (_linea, __data, callback) {
+                    this.SaveDirectivo(_linea, __data, true, callback)
                 },
-                Reeleccion: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, true, callback)
+                Reeleccion: function (_linea, __data, callback) {
+                    this.SaveDirectivo(_linea, __data, true, callback)
                 },
-                Cese: function ( __data, data, callback) {
-                    this.SaveDirectivo(__data, data, false, callback)
+                Cese: function (_linea, __data,  callback) {
+                    this.SaveDirectivo(_linea, __data, false, callback)
                 },
-                Revocacion: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, false, callback)
+                Revocacion: function (_linea, __data,  callback) {
+                    this.SaveDirectivo(_linea, __data, false, callback)
                 },
-                Oficio: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, false, callback)
+                Oficio: function (_linea, __data,  callback) {
+                    this.SaveDirectivo(_linea, __data, false, callback)
                 },
-                Cancela: function (__data, data, callback) {
+                Cancela: function (_linea, __data,  callback) {
                     this.SaveDirectivo(__data, data, false, callback)
                 }
             },
