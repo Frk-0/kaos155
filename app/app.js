@@ -136,7 +136,7 @@ App.IA.init('http://localhost:8080', App.IA, function (socket) {
 
                 //= app._io.listen(require('socket.io').listen(80), require('./node_app/elasticIO.js')(app))
 
-                this.pdftotext = require('./node_app/pdftotext.js')
+                this.pdftotext = require('./node_app/_utils/pdftotext.js')
                 require('./node_app/sql_common.js')(app, function (SQL) {
                     app.commonSQL = SQL
 

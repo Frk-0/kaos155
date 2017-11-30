@@ -3,7 +3,7 @@
     options = {
         
         Command: app.command,
-        Rutines: require('../utils/BORME/Borme_Rutines')(app, require('./BORME/Borme_Transforms')(app)),
+        Rutines: require('../_utils/BORME/Borme_Rutines.js')(app, require('./_BORME/Borme_Transforms.js')(app)),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         keyMap: [
             'Constitución.',
@@ -23,7 +23,7 @@
             'Datos registrales.',
             'Fe de erratas:'],
         url: app.urlBORME,
-        _common: require('../parser_common')(app),
+        _common: require('../_common.js')(app),
         SQL: { db: null },
         DirEmpresas: [],
         foundEmpresas: function (DirEmpresas, _empresa) {

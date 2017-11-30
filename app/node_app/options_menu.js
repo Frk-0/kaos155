@@ -30,7 +30,7 @@
         require("./sql_common.js")(app, function (commonSQL) {
             app.commonSQL = commonSQL
             app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', app._fileCredenciales + 'SCRAP' , function (scrapdb) {
-                scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP = 1" //+(command=='SCRAP' ? 1: 0) , function (err, record) {
+                scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP = 1" , function (err, record) { //+(command=='SCRAP' ? 1: 0) 
                     var anyos = []
                     if (command == 'SCRAP') {
                         

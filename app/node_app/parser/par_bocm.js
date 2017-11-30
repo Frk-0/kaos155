@@ -5,9 +5,9 @@
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-enc UTF-8'],
         //pdftotext : require('../pdftotext'),
-        Rutines: require('./BOLETIN/__Rutines')(app),
-        transforms: require('./BOLETIN/__Transforms')(app),
-        _common: require('../parser_common')(app),
+        Rutines: require('../_utils/CONTRATOS/__Rutines.js')(app),
+        transforms: require('../_utils/CONTRATOS/__Transforms.js')(app),
+        _common: require('../_common')(app),
         url: app.urlBOCM,
         SQL: {
             db: null,

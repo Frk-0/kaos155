@@ -2,9 +2,9 @@
     
     var options = {
         Command : app.command,
-        Rutines: require('../utils/BOLETIN/__Rutines')(app),
-        transforms: require('../utils/BOLETIN/__Transforms')(app),
-        _common: require('../parser_common')(app),
+        Rutines: require('../_utils/BOLETIN/__Rutines.js')(app),
+        transforms: require('../_utils/BOLETIN/__Transforms.js')(app),
+        _common: require('../_common.js')(app),
         SQL: {
             db: null,
             insert: function (options, _analisis, data, callback) {
