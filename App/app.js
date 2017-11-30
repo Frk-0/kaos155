@@ -1,9 +1,9 @@
 var Version = '0.1.3'
 
 //para propositos de testeo//
-process.argv.push('SCRAP')
-process.argv.push('BORME')
-process.argv.push('2017')
+// process.argv.push('SCRAP')
+// process.argv.push('BORME')
+// process.argv.push('2017')
 /////////////////////////////
 
 console.log('kaos155 App - version -' + Version+'.' )
@@ -127,7 +127,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 return require('./node_app/func_common.js')(app)
             },
             //rutina principal de entrada a la aplicacion
-            //entra la propia aplicación y la funcion a ejecutar
+            //entra la propia aplicaciÃ³n y la funcion a ejecutar
             init: function (app, cb) {
                 //cargamos el plugin de conversion de PDF a TEXTO
                 this.pdftotext = require('./node_app/_utils/pdftotext.js')
@@ -138,7 +138,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                     cb({
                         EXEC: function (type) {
 
-                                //cargamos la rutina de escrapeo específica del tipo de BOLETIN
+                                //cargamos la rutina de escrapeo especÃ­fica del tipo de BOLETIN
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
                                 //el retorno (options) es el objeto encargado del escrapeo         
                                 var prefix = app.command.substr(0,3).toLowerCase() + "_"
@@ -146,9 +146,9 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas de app
                                     app.BOLETIN = options
-                                    //cargamos los contadores para poder continuar donde se dejó
+                                    //cargamos los contadores para poder continuar donde se dejÃ³
                                     app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                                        //realizamos el proceso de escrapeo  en sí
+                                        //realizamos el proceso de escrapeo  en sÃ­
                                         options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
                                         
                                     })
@@ -164,7 +164,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 console.log('SISTEMA DETENIDO')
                 process.exit(i)
             },
-            //normalización de parametros de entrada
+            //normalizaciÃ³n de parametros de entrada
             parameters: function (app, myArgs,callback) {
                 var arg = myArgs[3]
 
@@ -236,13 +236,13 @@ String.prototype.lastIndexOfRegex = function (regex) {
             }
 
 
-            //comprobamos si el año es superior al minimo del type
+            //comprobamos si el aÃ±o es superior al minimo del type
             if (app.Mins[myArgs[1]] <= app.anyo) {
                 app.initDate = myArgs[2]
                 console.log('MySQL IP:' + app.SqlIP)
                 console.log('PROCESS:' + app.Type)
                 console.log('Anyo:' + app.anyo)
-                //debugger                                              //antes de inicar la aplicacion en sí
+                //debugger                                              //antes de inicar la aplicacion en sÃ­
                 app.init(app, function (_f) { _f.EXEC(app.Type) })
             } else {
                 console.log( 'no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]] )
