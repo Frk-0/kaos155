@@ -232,13 +232,13 @@
                                 }
                             })
                         },
-                        keys: function (options, table , params, callback, _cberror) {
-                            options.SQL.db.query("CALL Insert_Data_BORME_" + table + "(?,?,?)", [params.ID, params.e, params.k], function (err, _rec) {
+                        keys: function (options, params, callback, _cberror) {
+                            options.SQL.db.query("CALL Insert_Data_BORME_" + params.table + "(?,?,?)", [params.data.ID, params.e, params.k], function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
                                     _cberror(error)
                                 } else {
                                     
-                                    callback(params, record)
+                                    callback(params, _rec)
                                 }
                             })
                         },

@@ -234,7 +234,7 @@
 
                 }
             } else {
-                options.parser.Preceptos(type)
+                options.parser.Preceptos(options, type, function () { }, options.parser.Preceptos)
             }
         }
     }

@@ -3,7 +3,7 @@
     options = {
         
         Command: app.command,
-        Rutines: require('../_utils/BORME/Borme_Rutines.js')(app, require('./_BORME/Borme_Transforms.js')(app)),
+        Rutines: require('../_utils/BORME/Borme_Rutines.js')(app, require('../_utils/BORME/Borme_Transforms.js')(app)),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         keyMap: [
             'Constitución.',
@@ -136,8 +136,9 @@
                         //    if (app.IA.setinMemory('BM', _line.k, 1245489, app.IA.find, "_ks") != null)
                         //        debugger
                         app.IA.send('setinMemory', { type: '_E', array: [_line.e], compress: 'shorthash.unique' }, function (data) {
-                            _line.data.ID_Empresa = data.data.array._id[0]
+                            _line.data.ID = data.data.array._id[0]
                             _line.addNew = data.data.array.add[0]
+                            _line.table = "Empresa"
                             _this.saveLineaDeMovimientos(_line ,function(){
                                 options.SQL.scrapDb.SQL.db.query("UPDATE _"+type.toLowerCase()+"_text_"+app.anyo+" set parser=1 where ID_BORME = ? ",[recordset[0][0].ID_BORME],function(err,record){
                                     Preceptos(options, type, callback, Preceptos)

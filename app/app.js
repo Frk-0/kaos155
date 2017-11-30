@@ -26,6 +26,7 @@ var App = {
     inquirer: require('inquirer'),
     resolvePath: require('resolve-path'),
     shorter: require('shorthash'),
+    schedule: require('node-schedule')
 }
 
 String.prototype.Trim = function Trim(x) {
@@ -112,7 +113,7 @@ App.IA.init('http://localhost:8080', App.IA, function (socket) {
                     counter: 1
                 },
                 Sumario: {
-                    BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-19950102' },
+                    BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-20010102' },
                     BORME: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BORME-S-20090102' },
                     BOCM: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOCM-S-20100212' }
                 },
